@@ -181,9 +181,114 @@ across the world in search of
 legendary treasures and forgotten lands.
 </p>
 
-<a href="#" class="btn">
-Coming Soon
-</a>
+<div style="
+display:flex;
+align-items:center;
+gap:10px;
+padding:10px 18px;
+background:rgba(0,82,255,0.15);
+border:1px solid rgba(0,82,255,0.4);
+backdrop-filter:blur(12px);
+-webkit-backdrop-filter:blur(12px);
+border-radius:999px;
+box-shadow:0 0 20px rgba(0,82,255,0.25);
+">
+
+<img
+src="https://avatars.githubusercontent.com/u/108554348?s=200&v=4"
+width="28"
+height="28"
+style="
+border-radius:50%;
+box-shadow:0 0 10px rgba(0,82,255,0.6);
+">
+
+<div style="display:flex;flex-direction:column;line-height:1.1;">
+<span style="
+font-size:12px;
+color:#94a3b8;
+text-transform:uppercase;
+letter-spacing:1px;
+">
+Network
+</span>
+
+<span style="
+font-size:15px;
+font-weight:700;
+color:white;
+">
+Base Mainnet
+</span>
+</div>
+
+<div style="
+width:8px;
+height:8px;
+background:#22c55e;
+border-radius:50%;
+box-shadow:0 0 10px #22c55e;
+">
+</div>
+
+</div>
+
+<div style="margin-top:30px">
+
+<button id="connectBtn" class="btn">
+Connect Wallet
+</button>
+
+<div id="wallet"
+style="margin-top:15px;color:#fbbf24;">
+Not Connected
+</div>
+
+<div style="margin-top:25px">
+
+<button id="minus" class="btn">-</button>
+
+<span id="qty"
+style="font-size:28px;margin:0 20px;">
+1
+</span>
+
+<button id="plus" class="btn">+</button>
+
+</div>
+
+<div
+style="margin-top:20px;font-size:22px;">
+
+Price:
+<span id="price">0.001</span> ETH
+
+</div>
+
+<div
+style="margin-top:15px;font-size:20px;">
+
+Minted:
+<span id="minted">...</span>
+/
+5000
+
+</div>
+
+<button
+id="mintBtn"
+class="btn"
+style="margin-top:25px;">
+
+Mint NFT
+
+</button>
+
+<div id="status"
+style="margin-top:20px;">
+</div>
+
+</div>
 
 </div>
 
@@ -212,22 +317,27 @@ from his epic journey.
 <div class="stats">
 
 <div class="card">
-<h3>5000</h3>
-<p>Unique NFTs</p>
-</div>
-
-<div class="card">
 <h3>60%</h3>
 <p>Common</p>
 </div>
 
 <div class="card">
-<h3>30%</h3>
-<p>Epic</p>
+<h3>25%</h3>
+<p>Uncommon</p>
 </div>
 
 <div class="card">
 <h3>10%</h3>
+<p>Rare</p>
+</div>
+
+<div class="card">
+<h3>4%</h3>
+<p>Epic</p>
+</div>
+
+<div class="card">
+<h3>1%</h3>
 <p>Legendary</p>
 </div>
 
@@ -283,6 +393,168 @@ from his epic journey.
 <footer>
 © 2026 Marco Polo Legends
 </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.1/dist/ethers.umd.min.js"></script>
+
+<script>
+
+const CONTRACT =
+"0x5d77ddcC70faCC751E18888813fa9fb2312F8EE8";
+
+const ABI = [
+{"inputs":[{"internalType":"uint256","name":"quantity","type":"uint256"}],"name":"mint","outputs":[],"stateMutability":"payable","type":"function"},
+{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"result","type":"uint256"}],"stateMutability":"view","type":"function"}
+];
+
+let quantity = 1;
+let signer;
+let contract;
+
+function updatePrice(){
+document.getElementById("qty").innerText=quantity;
+document.getElementById("price").innerText=
+(0.001*quantity).toFixed(3);
+}
+
+document.getElementById("plus").onclick=()=>{
+quantity++;
+updatePrice();
+};
+
+document.getElementById("minus").onclick=()=>{
+if(quantity>1){
+quantity--;
+updatePrice();
+}
+};
+
+async function loadSupply(){
+
+try{
+
+const provider =
+new ethers.JsonRpcProvider(
+"https://mainnet.base.org"
+);
+
+const c =
+new ethers.Contract(
+CONTRACT,
+ABI,
+provider
+);
+
+const supply =
+await c.totalSupply();
+
+document.getElementById("minted")
+.innerText=supply.toString();
+
+}catch(e){
+console.log(e);
+}
+
+}
+
+loadSupply();
+
+document.getElementById("connectBtn")
+.onclick = async ()=>{
+
+try{
+
+await window.ethereum.request({
+method:"eth_requestAccounts"
+});
+
+const provider =
+new ethers.BrowserProvider(
+window.ethereum
+);
+
+signer =
+await provider.getSigner();
+
+contract =
+new ethers.Contract(
+CONTRACT,
+ABI,
+signer
+);
+
+const address =
+await signer.getAddress();
+
+document.getElementById("wallet")
+.innerText =
+address.slice(0,6)
++"..."
++
+address.slice(-4);
+
+}catch(err){
+
+alert(err.message);
+
+}
+
+};
+
+document.getElementById("mintBtn")
+.onclick = async ()=>{
+
+try{
+
+if(!contract){
+
+alert("Connect Wallet First");
+
+return;
+
+}
+
+document.getElementById("status")
+.innerText =
+"Waiting for confirmation...";
+
+const tx =
+await contract.mint(
+quantity,
+{
+value:
+ethers.parseEther(
+(0.001*quantity)
+.toString()
+)
+}
+);
+
+document.getElementById("status")
+.innerText =
+"Transaction Sent...";
+
+await tx.wait();
+
+document.getElementById("status")
+.innerText =
+"NFT Minted Successfully!";
+
+loadSupply();
+
+}catch(err){
+
+document.getElementById("status")
+.innerText =
+err.reason ||
+err.message;
+
+}
+
+};
+
+updatePrice();
+
+</script>
 
 </body>
 </html>
