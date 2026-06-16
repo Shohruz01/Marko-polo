@@ -468,13 +468,39 @@ from his epic journey.
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.1/dist/ethers.umd.min.js"></script>
 
 <script>
-
 const CONTRACT =
-"0x5d77ddcC70faCC751E18888813fa9fb2312F8EE8";
+"0x2ad1ed5af16814919911add8d716cdde3500b2ac";
+
 
 const ABI = [
-{"inputs":[{"internalType":"uint256","name":"quantity","type":"uint256"}],"name":"mint","outputs":[],"stateMutability":"payable","type":"function"},
-{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"result","type":"uint256"}],"stateMutability":"view","type":"function"}
+{
+  "inputs":[{"internalType":"uint256","name":"quantity","type":"uint256"}],
+  "name":"mint",
+  "outputs":[],
+  "stateMutability":"payable",
+  "type":"function"
+},
+{
+  "inputs":[],
+  "name":"totalSupply",
+  "outputs":[{"internalType":"uint256","name":"result","type":"uint256"}],
+  "stateMutability":"view",
+  "type":"function"
+},
+{
+  "inputs":[],
+  "name":"mintPrice",
+  "outputs":[{"internalType":"uint256","name":"","type":"uint256"}],
+  "stateMutability":"view",
+  "type":"function"
+},
+{
+  "inputs":[],
+  "name":"MAX_SUPPLY",
+  "outputs":[{"internalType":"uint256","name":"","type":"uint256"}],
+  "stateMutability":"view",
+  "type":"function"
+}
 ];
 
 let quantity = 1;
