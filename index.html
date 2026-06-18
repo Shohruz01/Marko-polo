@@ -469,7 +469,7 @@ from his epic journey.
 
 <script>
 const CONTRACT =
-"0x2ad1ed5af16814919911add8d716cdde3500b2ac";
+"0x35c2b10b6e4d0c785c6cbc9a8450ad58349a14a7";
 
 
 const ABI = [
@@ -499,6 +499,20 @@ const ABI = [
   "name":"MAX_SUPPLY",
   "outputs":[{"internalType":"uint256","name":"","type":"uint256"}],
   "stateMutability":"view",
+  "type":"function"
+},
+{
+  "inputs":[],
+  "name":"name",
+  "outputs":[{"internalType":"string","name":"","type":"string"}],
+  "stateMutability":"view",
+  "type":"function"
+},
+{
+  "inputs":[],
+  "name":"contractURI",
+  "outputs":[{"internalType":"string","name":"","type":"string"}],
+  "stateMutability":"pure",
   "type":"function"
 }
 ];
